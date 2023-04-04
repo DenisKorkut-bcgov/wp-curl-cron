@@ -1,6 +1,7 @@
 FROM alpine:3.17
 
 RUN apk --no-cache add curl
+RUN apk --no-cache add bash
 
 # Change timezone to PST for convenience
 ENV TZ=America/Vancouver
@@ -39,4 +40,4 @@ RUN echo go-crond -h
 
 # Important - Reset to the base image's user account.
 USER 26
-CMD go-crond -v --allow-unprivileged --auto
+CMD ["go-crond", "--allow-unprivileged", "--auto", "-v"]
