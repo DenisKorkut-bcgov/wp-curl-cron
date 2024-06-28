@@ -1,7 +1,8 @@
-FROM alpine:3.17
-
+FROM --platform=linux/x86_64 alpine:3.17
+RUN apk --no-cache add gcompat
 RUN apk --no-cache add curl
 RUN apk --no-cache add bash
+RUN apk --no-cache add shadow
 
 # Change timezone to PST for convenience
 ENV TZ=America/Vancouver
@@ -33,11 +34,13 @@ RUN echo $TZ > /etc/timezone
 
 ADD *.sh /
 RUN chmod +x /*.sh
-RUN echo "* * * * * ./curl.sh" >> /etc/crontabs/curl
+# Add every minute run of curl.sh which runs curl command on the $WP_HOST env var set on the deployment, as set by the helm chart
+RUN echo "* * * * * /bin/bash /curl.sh" >> /etc/crontabs/curl
 RUN chmod -R gu+r /etc/crontabs
 
 RUN echo go-crond -h
 
 # Important - Reset to the base image's user account.
-USER 26
-CMD ["go-crond", "--allow-unprivileged", "--auto", "-v"]
+
+
+CMD ["/bin/bash", "-c", "go-crond --allow-unprivileged --auto -v"]
