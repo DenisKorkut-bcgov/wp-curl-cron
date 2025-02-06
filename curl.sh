@@ -8,6 +8,7 @@ while [ $n -le $end ]; do
     network=${!network_env}
 
     if [ -n "${network}" ]; then
+        echo "Run network cron: https://${WP_HOST}/$network/wp-json/wpch/v1/cron"
         curl --insecure https://${WP_HOST}/$network/wp-json/wpch/v1/cron
     fi
     n=$((n+1))
